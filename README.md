@@ -2,8 +2,6 @@
 
 *Information theory, two ways — and what happens when you stop nodding politely at it and actually use it.*
 
----
-
 ## The story
 
 As an ML engineer, I used to reach for `cross_entropy_loss` the way I trust the default Adam hyperparameters — full confidence, zero scrutiny. I knew the formula, I knew how it punishes wrong predictions and rewards confident-correct ones. The number goes down, the model gets better, what's not to like. But I never *really* understood it. I didn't even know why I was choosing it in the first place when there are so many other losses out there doing apparently the same job (how is this one any different?). What me and cross-entropy had was a very surface-level relationship, and I wanted something more intimate, you know — because I'm stuck with this thing for life :-p
@@ -26,8 +24,6 @@ You see the beauty of this thing? How should one not fall in Love? Two completel
 
 Spoiler : it does. Mostly.
 
----
-
 ## Where to start
 
 If like me you also want a deeper relationship with Cross Entropy , Entropy and Uncertainty in general , here's what I would do , read these in order.
@@ -44,22 +40,34 @@ If like me you also want a deeper relationship with Cross Entropy , Entropy and 
 
 After those four , you'll feel the love I am feeling for our dearest Cross Entropy and Uncertainty
 
----
 
-## The projects
+## The Project
 
-Each project applies the same engine (entropy, information gain, Bayesian update) to a different problem of increasing nastiness.
+### Akinator - Inspired from Wordle Solution but Easier
 
-- **[`akinator/`](./akinator)** — the warm-up. A 20-questions-style solver over a small hand-authored celebrity table. The cleanest possible demonstration of "pick the question with maximum expected information gain." If you can build this , you understand the algorithm.
-- **[`wordle/`](./wordle)** — the canonical example, popularised by 3B1B. An optimal Wordle solver with frequency-based priors and the full 243-pattern entropy machinery. Same algorithm as Akinator but with significantly more engineering attached.
-- **[`llm-20-questions/`](./llm-20-questions)** — the capstone. An agent for Kaggle's [LLM 20 Questions](https://www.kaggle.com/competitions/llm-20-questions) competition that uses the same engine but with an LLM as a very noisy oracle. Everything that *can* go wrong here does , which is kind of the whole point.
+If you've watched Grant Sanderson's [Wordle video](https://www.youtube.com/watch?v=v68zYyaEmEA), you've already seen the canonical demo of information theory in action — entropy picking the optimal guess at every step, the solver narrowing 13,000 candidate words down to one. He even walks through the subtle moments — like when the solver gets down to two candidate words and has no way to break the tie except guessing one and hoping, then upgrades the solver with word-frequency priors so it learns to prefer the more common candidate. If you haven't watched it yet, go do that first. It's twenty minutes and it'll change how you think about guessing games forever.
 
-More to come as I find new things to chase. Each project has its own README with the algorithm , the result , and whatever surprised me along the way.
+I tried implementing it myself. And the *theory* clicked instantly — but the *implementation* didn't. Wordle's feedback isn't binary; every guess produces one of 243 possible colour patterns (5 squares × 3 colours each). So every entropy calculation is a 243-bucket sum, every belief update is a 243-pattern filter, and the algorithm hides under the combinatorial machinery. You can verify it works statistically, but you can't *feel* it work — the steps are too dense to follow by hand, the bookkeeping too heavy to debug by inspection.
 
----
+So instead of redoing Wordle (Grant already does it definitively), I built **Akinator** — same engine on a smaller, predictable domain. 46 animals, 18 binary features, yes/no questions only. The whole entropy table fits on a screen, you can compute any step on a napkin, and you can *see* why the solver picks what features at each step
 
-## Why this repo exists
+I deliberately built in the same arc as Grant's video, just slower and more visible at every step:
 
-This repo exists to admire the beauty of Cross Entropy , Entropy and Uncertainty and how elegantly they summarise this feeling in mathematical form. We get handed information-theoretic tools in ML as if they're just formulas to plug in. They're not — they're a whole way of thinking about uncertainty, observation , and belief update that goes way beyond loss functions. The best way I know to actually internalise something like that is to build things where the formulas have to carry real weight. If a bot can't guess "Beyoncé" in seven questions , the formula failed *me* — not the other way around.
+- **Start with uniform priors** — every animal equally likely. The solver works, the math holds, ~5.6 questions average. But two pairs of animals (Horse/Cow, Pig/Rabbit) have *identical feature vectors*, and the solver can't break the tie no matter what it asks — the same dead-end Grant hits with two-word ambiguity in Wordle.
+- **Fix the dataset.** Add two features that target the indistinguishability directly. The dead-ends vanish.
+- **Add non-uniform priors** — Just like in Wordle not all the candidate words can be answer and some occur more than the other , animals also differ in popularity and common animals might be the answer in real life than rarer ones. Lion gets a higher prior than Platypus, because that's what a real player would pick. Watch the solver's strategy shift from *"split the candidate pool"* to *"split the probability mass."* Common animals get found in 4 questions instead of 5. The same move Grant makes when he adds word-frequency priors from a Google dataset.
+
+Three experiments, written up in [`akinator/README.md`](./akinator/README.md), each with the numbers and the surprises. The point is not the bot — it's that *every* concept in information theory has a small, predictable version you can verify by hand before you trust it at scale.
+
+**If you want the deeper learning loop**: watch Grant's video, then try implementing Wordle yourself. When the 243-pattern machinery slows you down (it will), come read through Akinator. Both projects does the same thing; one just hides nothing.
+
+### What's next — LLM 20 Questions *(coming soon)*
+
+The natural extension is to swap the deterministic answerer for an LLM — noisy, sometimes wrong, candidate space unbounded. The same engine should still work but with Bayesian belief update instead of hard filtering. That's the bridge from Akinator (clean) to real-world systems (messy). Building this next as an agent for Kaggle's [LLM 20 Questions](https://www.kaggle.com/competitions/llm-20-questions) competition.
+
+
+## Why this Project exists?
+
+This Project exists to admire the beauty of Cross Entropy , Entropy and Uncertainty and how elegantly they summarise this feeling in mathematical form. We get handed information-theoretic tools in ML as if they're just formulas to plug in. They're not — they're a whole way of thinking about uncertainty, observation , and belief update that goes way beyond loss functions. The best way I know to actually internalise something like that is to build things where the formulas have to carry real weight. If a bot can't guess "Beyoncé" in seven questions , the formula failed *me* — not the other way around.
 
 If you came here just for the code : it's all in the project folders. If you came to chase the same thread I did : start with the four links above , then poke around.
