@@ -19,8 +19,8 @@ pip install -r ../requirements.txt
 python play.py
 ```
 
-## Why this project exists
+## Why this Project exists?
 
-We get handed information-theoretic tools in ML as if they're just formulas to plug in. They're not — they're a whole way of thinking about uncertainty, observation, and belief update. The best way I know to internalise something like that is to build things where the formulas have to carry real weight.
+This Project exists to admire the beauty of Cross Entropy , Entropy and Uncertainty and how elegantly they summarise this feeling in mathematical form. We get handed information-theoretic tools in ML as if they're just formulas to plug in. They're not — they're a whole way of thinking about uncertainty, observation , and belief update that goes way beyond loss functions. The best way I know to actually internalise something like that is to build things where the formulas have to carry real weight. If a bot can't guess "Beyoncé" in seven questions , the formula failed *me* — not the other way around.
 
-The full version of this story, the resources that got me here, and the learning notes I made along the way [live on my site](https://tanulsingh.github.io/projects/two-faces-of-entropy).
+If you came here just for the code : it's all in the project folders. If you came to chase the same thread I did : start with the four links above , then poke around.
